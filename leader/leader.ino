@@ -95,6 +95,8 @@ float student_specified_force(float handle_position, float handle_velocity, floa
   #endif
 
   #ifdef SCALED_BILATERAL 
+  float scaling = 3;
+  force = kp * (scaling * handle_position_remote - scaling * handle_position) + kd * (scaling * handle_velocity_remote - scaling * handle_velocity);
   #endif
   
   return force;
