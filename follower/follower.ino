@@ -15,6 +15,12 @@
 
 #define BAUDRATE 115200
 
+
+/*
+*   TODO: Could probably add scaled_bilateral_leader, scaled_bilateral_follower.
+*   Switch case between modes in calc_force function so that .ino's can
+*   be merged. Header files wouldn't need to be copied in two folders
+*/
 enum class Mode {
     bilateral,
     scaled_bilateral
