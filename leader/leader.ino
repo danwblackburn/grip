@@ -57,7 +57,7 @@ float calculate_pulley_torque(float force) {
 /*
  * Specifies a desired force to render on the hapkit
  */
-float student_specified_force(float handle_position, float handle_velocity, float handle_position_remote) {
+float calculate_force(float handle_position, float handle_velocity, float handle_position_remote) {
   // STUDENT CODE HERE
 
   float handle_velocity_remote = 0;
@@ -99,7 +99,7 @@ void loop()
   
   float remote_position = send_receive_remote_arduino(handle_position);
   
-  float force = student_specified_force(handle_position, smoothed_velocity, remote_position);
+  float force = calculate_force(handle_position, smoothed_velocity, remote_position);
   float pulley_torque = calculate_pulley_torque(force);
   
   // Command the motor
