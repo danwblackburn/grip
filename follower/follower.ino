@@ -37,10 +37,11 @@ GripperState current_state;
 */
 double MRToSectorAngle (double mr_counts)
 {
-  // Linear fit in degrees
- double m = -0.011283;
- double b = 7.749591;
- double deg = m * mr_counts + b;
+ // double m = -0.0116;
+// double b = -3.8115;
+// double deg = m * mr_counts + b;
+  double deg = mr_counts * .01295897 - 12.5226847 + 6;
+
 
  return deg * M_PI / 180.0; //deg to rad
 }
@@ -50,7 +51,7 @@ double MRToSectorAngle (double mr_counts)
  */
 float calculate_force(float handle_position, float handle_velocity, float handle_position_remote) {
   float handle_velocity_remote = 0;
-  float kp = 50;
+  float kp = 100;
   float kd = 1;
   float force = 0;
   

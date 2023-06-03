@@ -15,6 +15,12 @@
 
 #define BAUDRATE 115200
 
+
+/*
+*   TODO: Could probably add scaled_bilateral_leader, scaled_bilateral_follower.
+*   Switch case between modes in calc_force function so that .ino's can
+*   be merged. Header files wouldn't need to be copied in two folders
+*/
 enum class Mode {
     bilateral,
     scaled_bilateral
@@ -31,35 +37,34 @@ GripperState current_state;
 */
 double MRToSectorAngle (double mr_counts)
 {
- // double m = -0.0116;
+// double m = -0.0116;
 // double b = -3.8115;
 // double deg = m * mr_counts + b;
   double deg = mr_counts * .01295897 - 12.5226847 + 6;
 
 
- return  deg * M_PI / 180.0; //deg to rad
+ return deg * M_PI / 180.0; //deg to rad
 }
 
 /*
  * Specifies a desired force to render on the hapkit
  */
-float calculate_force(float handle_position, float handle_velocity, float handle_position_remote) 
-{
+float calculate_force(float handle_position, float handle_velocity, float handle_position_remote) {
   float handle_velocity_remote = 0;
-  float kp = 100;
+  float kp = 200;
   float kd = 1;
   float force = 0;
   
   if(current_mode == Mode::bilateral)
   {
-     force = kp * (handle_position_remote - handle_position) + kd * (handle_velocity_remote - handle_velocity);
-  }
-  else
+    force = kp * (handle_position_remote - handle_position) + kd * (handle_velocity_remote - handle_velocity);
+  } 
+  else //else in scaled bilateral mode
   {
     float scaling = 3;
-    force = kp * (scaling * handle_position_remote - scaling * handle_position) + kd * (scaling * handle_velocity_remote - scaling * handle_velocity);
-  }
-  
+    force = kp * (handle_position_remote - scaling * handle_position) + kd * (handle_velocity_remote - scaling * handle_velocity);
+  } 
+
   return force;
 }
 
@@ -81,16 +86,18 @@ void loop()
   // Update state with newest reading
   current_state.UpdateState(MRToSectorAngle(mr_counts), /*DT=*/0.001);
   
-  // Receive leader position
-  float remote_position = send_receive_remote_arduino(current_state.GetFingerPos());
+  float desired_position = 1.0 / 100;
 
   // Calculate and set force
-  float force = calculate_force(current_state.GetFingerPos(), smoothed_velocity, remote_position);
+  float force = calculate_force(current_state.GetFingerPos(), smoothed_velocity, desired_position);
   current_state.SetDesiredForce(force);
 
   // Command motor torque
   command_motor(current_state.GetTorqueCmd());
 
+//  Serial.println(MRToSectorAngle(mr_counts) * 180 / M_PI);
+  Serial.println(current_state.GetFingerPos() * 100);
+  
   // Check if loop speed is too slow, and if so, print an error message.
   check_loop_speed();
 }
