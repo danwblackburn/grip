@@ -96,7 +96,7 @@ void loop()
   command_motor(current_state.GetTorqueCmd());
 
 //  Serial.println(MRToSectorAngle(mr_counts) * 180 / M_PI);
-  Serial.println(current_state.GetFingerPos() * 100);
+  Serial.println(force);
   
   // Check if loop speed is too slow, and if so, print an error message.
   check_loop_speed();

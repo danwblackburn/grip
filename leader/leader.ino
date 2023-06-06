@@ -46,7 +46,7 @@ double MRToSectorAngle (double mr_counts)
 float calculate_force(float handle_position, float handle_velocity, float handle_position_remote) 
 {
   float handle_velocity_remote = 0;
-  float kp = 100;
+  float kp = 200;
   float kd = 1;
   float force = 0;
   
@@ -66,10 +66,11 @@ float calculate_force(float handle_position, float handle_velocity, float handle
 void setup() 
 {
   Serial.begin(BAUDRATE);
-
   initialize_sensor();
   initialize_motor();
   initialize_loop_checker();
+
+  pinMode(A0, OUTPUT);
 }
 
 int count = 0;
@@ -87,6 +88,15 @@ void loop()
   // Calculate and set force
   float force = calculate_force(current_state.GetFingerPos(), smoothed_velocity, remote_position);
   current_state.SetDesiredForce(force);
+
+  if(force > .5)
+  {
+    digitalWrite(A0, HIGH);
+  }
+  else
+  {
+    digitalWrite(A0, LOW);
+  }
 
   // Command motor torque
   command_motor(current_state.GetTorqueCmd());
