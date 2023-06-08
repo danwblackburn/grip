@@ -15,12 +15,6 @@
 
 #define BAUDRATE 115200
 
-
-/*
-*   TODO: Could probably add scaled_bilateral_leader, scaled_bilateral_follower.
-*   Switch case between modes in calc_force function so that .ino's can
-*   be merged. Header files wouldn't need to be copied in two folders
-*/
 enum class Mode {
     bilateral,
     scaled_bilateral
@@ -37,11 +31,9 @@ GripperState current_state;
 */
 double MRToSectorAngle (double mr_counts)
 {
- // double m = -0.0116;
-// double b = -3.8115;
-// double deg = m * mr_counts + b;
-  double deg = mr_counts * .01295897 - 12.5226847 + 6;
-
+double m = .01295897;
+double b = - 6.5226847;
+double deg = m * mr_counts + b;
 
  return deg * M_PI / 180.0; //deg to rad
 }
@@ -75,6 +67,7 @@ void setup()
   initialize_motor();
   initialize_loop_checker();
 
+  // Set LED pin to Output
   pinMode(A0, OUTPUT);
 }
 
@@ -94,6 +87,7 @@ void loop()
   float force = calculate_force(current_state.GetFingerPos(), smoothed_velocity, remote_position);
   current_state.SetDesiredForce(force);
 
+  // Turn on LED if force large enough
   if(abs(force) >  .6)
   {
     digitalWrite(A0, HIGH);

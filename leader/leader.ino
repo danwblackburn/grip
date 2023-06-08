@@ -31,13 +31,11 @@ GripperState current_state;
 */
 double MRToSectorAngle (double mr_counts)
 {
- // double m = -0.0116;
-// double b = -3.8115;
-// double deg = m * mr_counts + b;
-  double deg = mr_counts * .01295897 - 12.5226847 + 6;
+  double m = .01295897;
+  double b = - 6.5226847;
+  double deg = m * mr_counts + b;
 
-
- return  deg * M_PI / 180.0; //deg to rad
+  return deg * M_PI / 180.0; //deg to rad
 }
 
 /*
@@ -69,8 +67,6 @@ void setup()
   initialize_sensor();
   initialize_motor();
   initialize_loop_checker();
-
-  pinMode(A0, OUTPUT);
 }
 
 int count = 0;
@@ -88,15 +84,6 @@ void loop()
   // Calculate and set force
   float force = calculate_force(current_state.GetFingerPos(), smoothed_velocity, remote_position);
   current_state.SetDesiredForce(force);
-
-  if(force > .5)
-  {
-    digitalWrite(A0, HIGH);
-  }
-  else
-  {
-    digitalWrite(A0, LOW);
-  }
 
   // Command motor torque
   command_motor(current_state.GetTorqueCmd());
