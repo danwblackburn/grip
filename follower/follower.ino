@@ -94,7 +94,7 @@ void loop()
   float force = calculate_force(current_state.GetFingerPos(), smoothed_velocity, remote_position);
   current_state.SetDesiredForce(force);
 
-  if(abs(force) >  .7)
+  if(abs(force) >  .6)
   {
     digitalWrite(A0, HIGH);
   }
